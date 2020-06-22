@@ -1,0 +1,9 @@
+type Bool : Type =
+| True : Bool
+| False : Bool
+
+let foo (a : Type) (b : Type) (f : a -> a -> b) (v : a) : b =
+    f v v
+
+let bar (f : Bool -> Bool -> Bool) (b : Bool) : Bool =
+    foo Bool Bool f b

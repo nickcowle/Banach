@@ -1,0 +1,38 @@
+type Nat : Type =
+| Z : Nat
+| S : Nat -> Nat
+
+let succ (n : Nat) : Nat =
+    Nat.S n
+
+let rec plus (n : Nat) (m : Nat) : Nat =
+    match n with
+    | Nat.Z -> m
+    | Nat.S k -> Nat.S (plus k m)
+
+let two : Nat = Nat.S (Nat.S Nat.Z)
+
+let four : Nat = plus two two
+
+let rec idN (n : Nat) : Nat =
+    match n with
+    | Nat.Z -> Nat.Z
+    | Nat.S k -> Nat.S (idN k)
+
+let bar (n : Nat) : Nat =
+    succ n
+
+let foo (n : Nat) : Nat =
+    match n with
+    | Nat.Z -> Nat.Z
+    | Nat.S k -> bar k
+
+let rec baz (n : Nat) : Nat =
+    match n with
+    | Nat.Z -> Nat.Z
+    | Nat.S k -> baz k
+
+let blah (n : Nat) (m : Nat) : Nat =
+    match n with
+    | Nat.Z -> m
+    | Nat.S k -> Nat.Z

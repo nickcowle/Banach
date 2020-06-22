@@ -1,0 +1,10 @@
+type Nat : Type =
+| Z : Nat
+| S : Nat -> Nat
+
+let rec downToZero (n : Nat) : Nat =
+    match n with
+    | Nat.Z -> Nat.Z
+    | Nat.S k -> downToZero k
+
+let test : Nat = downToZero (Nat.S (Nat.S Nat.Z))

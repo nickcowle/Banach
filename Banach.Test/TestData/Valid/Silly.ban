@@ -1,0 +1,17 @@
+type Bool : Type =
+| True : Bool
+| False : Bool
+
+type Nat : Type =
+| Z : Nat
+| S : Nat -> Nat
+
+let sillyType (b : Bool) : Type =
+    match b with
+    | Bool.True -> Bool
+    | Bool.False -> Nat
+
+let silly (b : Bool) : sillyType b =
+    match b with
+    | Bool.True -> Bool.False
+    | Bool.False -> Nat.Z

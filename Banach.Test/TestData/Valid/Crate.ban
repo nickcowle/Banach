@@ -1,0 +1,2 @@
+type Crate : (Type -> Type) -> Type =
+| Crate : (m : Type -> Type) -> (a : Type) -> (v : m a) -> Crate m

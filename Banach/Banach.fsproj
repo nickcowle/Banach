@@ -8,7 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Library.fs" />
+    <Compile Include="Untyped.fs" />
+    <Compile Include="Parser.fsi" />
+    <Compile Include="Parser.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Parsy" Version="0.0.1" />
   </ItemGroup>
 
 </Project>

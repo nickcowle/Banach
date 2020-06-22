@@ -1,0 +1,3 @@
+﻿type List : Type -> Type =
+| Nil : (a : Type) -> List a
+| Cons : (a : Type) -> List a -> List a

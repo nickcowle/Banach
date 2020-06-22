@@ -1,0 +1,10 @@
+type Nat : Type =
+| Z : Nat
+| S : Nat -> Nat
+
+let foo (n : Nat) (m : Nat) : Nat =
+    match n with
+    | Nat.Z -> m
+    | Nat.S k -> Nat.Z
+
+let bar : Nat = foo Nat.Z Nat.Z

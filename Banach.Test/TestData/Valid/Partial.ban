@@ -1,0 +1,9 @@
+type Bool : Type =
+| True : Bool
+| False : Bool
+
+let foo (b1 : Bool) (b2 : Bool) : Bool =
+    b1
+
+let bar : Bool -> Bool =
+    foo Bool.True

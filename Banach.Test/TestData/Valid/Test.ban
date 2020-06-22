@@ -1,0 +1,49 @@
+type Bool : Type =
+| True : Bool
+| False : Bool
+
+type Nat : Type =
+| Z : Nat
+| S : Nat -> Nat
+
+type List : Type -> Type =
+| Nil : (a : Type) -> List a
+| Cons : (a : Type) -> List a -> List a
+
+type Vect : Nat -> Type -> Type =
+| Nil : (a : Type) -> Vect Nat.Z a
+| Cons : (n : Nat) -> (a : Type) -> a -> Vect n a -> Vect (Nat.S n) a
+
+type Eq : (a : Type) -> a -> a -> Type =
+| Refl : (a : Type) -> (v : a) -> Eq a v v
+
+type Crate : (Type -> Type) -> Type =
+| Crate : (m : Type -> Type) -> (a : Type) -> (v : m a) -> Crate m
+
+type HList : (n : Nat) -> Vect n Type -> Type =
+| Nil : HList Nat.Z (Vect.Nil Type)
+| Cons : (t : Type) -> (x : t) -> (n : Nat) -> (ts : Vect n Type) -> (xs : HList n ts) -> HList (Nat.S n) (Vect.Cons n Type t ts)
+
+type HListT : (n : Nat) -> (m : Type -> Type) -> Vect n Type -> Type =
+| Nil : (m : Type -> Type) -> HListT Nat.Z m (Vect.Nil Type)
+| Cons : (m : Type -> Type) -> (t : Type) -> (x : m t) -> (n : Nat) -> (ts : Vect n Type) -> (xs : HListT n m ts) -> HListT (Nat.S n) m (Vect.Cons n Type t ts)
+
+let two : Nat = Nat.S (Nat.S Nat.Z)
+
+let four : Nat = Nat.S (Nat.S (Nat.S (Nat.S Nat.Z)))
+
+let id (t : Type) (a : t) : t =
+    a
+
+let rec plus (n : Nat) (m : Nat) : Nat =
+    match m with
+    | Nat.Z -> n
+    | Nat.S k -> Nat.S (plus n k)
+
+let twoPlusTwoEqFour : Eq Nat (plus two two) four =
+    Eq.Refl Nat four
+
+let rec append (n : Nat) (m : Nat) (a : Type) (xs : Vect n a) (ys : Vect m a) : Vect (plus n m) a =
+    match xs with
+    | Vect.Nil a -> ys
+    | Vect.Cons k a x xs -> Vect.Cons (plus k m) a x (append k m a xs ys)

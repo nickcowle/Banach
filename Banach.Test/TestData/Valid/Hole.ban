@@ -1,0 +1,7 @@
+type Bool : Type =
+| True : Bool
+| False : Bool
+
+let f (b : Bool) : Bool =
+    let unknown : Bool = ?foo
+    unknown

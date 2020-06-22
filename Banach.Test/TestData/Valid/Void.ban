@@ -1,0 +1,12 @@
+﻿type Void : Type =
+
+let void (v : Void) (a : Type) : a =
+    match v with
+
+let Not (t : Type) : Type =
+    t -> Void
+
+let russell (p : Type) (prf1 : p -> Not p) (prf2 : Not p -> p) : Void =
+    let warbler (f : p -> Not p) (v : p) : Void = f v v
+    let notP : Not p = warbler prf1
+    notP (prf2 notP)

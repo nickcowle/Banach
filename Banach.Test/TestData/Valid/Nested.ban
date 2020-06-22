@@ -1,0 +1,10 @@
+let foo (t : Type) : Type =
+    let bar (u : Type) (v : Type) : Type = u
+    let baz (w : Type) : Type =
+        let quux (x : Type) : Type =
+            type MyType : Type -> Type =
+            | Constructor1 : MyType Nat
+            | Constructor2 : Nat -> Nat -> MyType Bool
+            x
+        w
+    t
