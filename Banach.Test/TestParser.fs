@@ -6,6 +6,8 @@ open Xunit
 
 module TestParser =
 
+    let newLine = System.Environment.NewLine
+
     let assertOneFullParse (parser : 'a Parser) (input : string) (f : 'a -> unit) =
         let parse = ReferenceParser.make parser
         let fullParses = input |> parse |> List.filter (fun (_, s) -> s = "")
@@ -55,14 +57,14 @@ module TestParser =
 
     [<Fact>]
     let ``Test value definition parse 2`` () =
-        let input = "let fst (t : Type) (a : t) (b : t) : t =\r\n    a"
+        let input = "let fst (t : Type) (a : t) (b : t) : t =" + newLine + "    a"
         let test = ignore
         assertOneFullParse (Parser.valueDefinition 0) input test
 
 
     [<Fact>]
     let ``Test type definition parse`` () =
-        let input = "type Nat : Type =" + System.Environment.NewLine + "| Z : Nat" + System.Environment.NewLine + "| S : Nat -> Nat"
+        let input = "type Nat : Type =" + newLine + "| Z : Nat" + newLine + "| S : Nat -> Nat"
         let test = ignore
         assertOneFullParse (Parser.typeDefinition 0) input test
 
