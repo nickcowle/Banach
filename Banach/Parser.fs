@@ -101,7 +101,7 @@ module Parser =
         let body = Parser.choice [ inlineBody ; multilineBody ]
 
         (
-            !!(!"let" ++ +" ") >>. recursive .>>. identifier,
+            !!(!"let" ++ +" ") >>. recursive .>>. identifierPart,
             parameters,
             !!(+" " ++ !":" ++ +" ") >>. inlineExpression,
             !!(+" " ++ !"=") >>. body
@@ -117,7 +117,7 @@ module Parser =
             (TextParser.newLine |> Parser.ofTextParser) >>. exactlyNSpaces indent >>. !!(!"|" ++ +" ") >>. identifier .>> !!(+" " ++ !":" ++ +" ") .>>. inlineExpression
 
         (
-            !!(!"type" ++ +" ") >>. identifier,
+            !!(!"type" ++ +" ") >>. identifierPart,
             !!(+" " ++ !":" ++ +" ") >>. inlineExpression .>> !!(+" " ++ !"="),
             Parser.zeroOrMore [] (fun xs x -> xs@[x]) constructor
         )

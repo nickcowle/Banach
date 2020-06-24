@@ -21,7 +21,7 @@ and Expr<'annot> =
 type ValueDef<'annot> =
     {
         Recursive : bool
-        Name : Ident
+        Name : string
         Parameters : (Ident * Expr<'annot>) list
         ReturnType : Expr<'annot>
         InnerDefinitions : Def<'annot> list
@@ -31,7 +31,7 @@ type ValueDef<'annot> =
 
 and TypeDef<'annot> =
     {
-        Name : Ident
+        Name : string
         TType : Expr<'annot>
         Constructors : (Ident * Expr<'annot>) list
         Annotation : 'annot
