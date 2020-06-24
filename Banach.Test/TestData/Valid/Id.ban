@@ -1,0 +1,7 @@
+type Nat : Type =
+| Z : Nat
+| S : Nat -> Nat
+
+let id (a : Type) (x : a) : a = x
+
+let test : Nat = id Nat Nat.Z

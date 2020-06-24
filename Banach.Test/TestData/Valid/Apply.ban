@@ -1,0 +1,8 @@
+type Nat : Type =
+| Z : Nat
+| S : Nat -> Nat
+
+let apply (f : Nat -> Nat) (x : Nat) : Nat =
+    f x
+
+let test : Nat = apply Nat.S Nat.Z

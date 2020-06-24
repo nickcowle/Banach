@@ -1,3 +1,11 @@
+type Nat : Type =
+| Z : Nat
+| S : Nat -> Nat
+
+type Vect : Nat -> Type -> Type =
+| Nil : (a : Type) -> Vect Nat.Z a
+| Cons : (a : Type) -> (x : a) -> (n : Nat) -> (xs : Vect n a) -> Vect (Nat.S n) a
+
 type HListT : (n : Nat) -> (m : Type -> Type) -> Vect n Type -> Type =
 | Nil : (m : Type -> Type) -> HListT Nat.Z m (Vect.Nil Type)
 | Cons : (m : Type -> Type) -> (t : Type) -> (x : m t) -> (n : Nat) -> (ts : Vect n Type) -> (xs : HListT n m ts) -> HListT (Nat.S n) m (Vect.Cons n Type t ts)

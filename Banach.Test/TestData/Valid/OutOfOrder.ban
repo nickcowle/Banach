@@ -1,0 +1,8 @@
+type Nat : Type =
+| Z : Nat
+| S : Nat -> Nat
+
+let rec plus (n : Nat) (m : Nat) : Nat =
+    match n with
+    | Nat.S k -> Nat.S (plus k m)
+    | Nat.Z -> m

@@ -1,3 +1,11 @@
+type Bool : Type =
+| True : Bool
+| False : Bool
+
+type Nat : Type =
+| Z : Nat
+| S : Nat -> Nat
+
 let foo (t : Type) : Type =
     let bar (u : Type) (v : Type) : Type = u
     let baz (w : Type) : Type =
