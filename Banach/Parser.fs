@@ -7,6 +7,9 @@ open Parsy.TextParserOperators
 [<RequireQualifiedAccess>]
 module Parser =
 
+    let makeUExpr body = { Body = body ; Annotation = () }
+
+
     let oneOrMoreSpaces : int Parser =
         TextParser.character ' ' |> TextParser.oneOrMore |> Parser.ofTextParser |> Parser.map (fun s -> s.Length)
 
@@ -23,12 +26,12 @@ module Parser =
         |> Parser.ofTextParser
 
 
-    let identifier : UIdent Parser =
-        Parser.interleave List.singleton (fun xs () x -> x::xs) identifierPart !!!"." >=> (List.rev >> UIdent)
+    let identifier : Ident Parser =
+        Parser.interleave List.singleton (fun xs () x -> x::xs) identifierPart !!!"." >=> (List.rev >> Ident)
 
 
-    let hole : UHole Parser =
-        !!!"?" >>. identifierPart >=> UHole
+    let hole : Hole Parser =
+        !!!"?" >>. identifierPart >=> Hole
 
 
     let newLines : unit Parser =
@@ -37,23 +40,23 @@ module Parser =
 
     let rec inlineExpressionInner () : UExpr Parser =
 
-        let ident = identifier >=> UExprIdent
-        let hole = hole >=> UExprHole
+        let ident = identifier >=> (ExprIdent >> makeUExpr)
+        let hole = hole >=> (ExprHole >> makeUExpr)
 
         let bracketedInline =
             let inlineExpression = Parser.delay inlineExpressionInner
-            let named = (identifier .>> !!(+" " ++ !":" ++ +" "), inlineExpression) >==> (fun i e -> UExprNamed (i, e))
+            let named = (identifier .>> !!(+" " ++ !":" ++ +" "), inlineExpression) >==> (fun i e -> ExprNamed (i, e) |> makeUExpr)
             Parser.choice [ inlineExpression ; named ] |> bracketed
 
         let apps =
             let part = Parser.choice [ hole ; ident ; bracketedInline ]
-            let makeApp e1 () e2 = UExprApp (e1, e2)
+            let makeApp e1 () e2 = ExprApp (e1, e2) |> makeUExpr
             Parser.interleave1 makeApp makeApp part (!!(+" "))
 
         let arrows =
             let part = Parser.choice [ hole ; ident ; apps ; bracketedInline ]
             Parser.interleave1 (fun e1 () e2 -> [e2;e1]) (fun es () e -> e::es) part !!(+" " ++ !"->" ++ +" ")
-            >=> (List.reduce (fun e1 e2 -> UExprArr (e2, e1)))
+            >=> (List.reduce (fun e1 e2 -> ExprArr (e2, e1) |> makeUExpr))
 
         Parser.choice [ hole ; ident ; apps ; arrows ]
 
@@ -76,7 +79,7 @@ module Parser =
                 !!(!"match" ++ +" ") >>. inlineExpression .>> !!(+" " ++ !"with"),
                 Parser.zeroOrMore [] (fun cs c -> cs@[c]) matchCase
             )
-            >==> (fun e cases -> UExprMatch (e, cases))
+            >==> (fun e cases -> ExprMatch (e, cases) |> makeUExpr)
 
         Parser.choice [ inlineExpression ; matchExpression ]
 
@@ -105,7 +108,7 @@ module Parser =
         )
         >====>
         (fun (recursive, name) parameters returnType (defs, body) ->
-            { Recursive = recursive ; Name = name ; Parameters = parameters ; ReturnType = returnType ; InnerDefinitions = defs ; Body = body })
+            { Recursive = recursive ; Name = name ; Parameters = parameters ; ReturnType = returnType ; InnerDefinitions = defs ; Body = body ; Annotation = () })
 
 
     and typeDefinition (indent : int) : UTypeDef Parser =
@@ -119,14 +122,14 @@ module Parser =
             Parser.zeroOrMore [] (fun xs x -> xs@[x]) constructor
         )
         >===>
-        (fun name tType constructors -> { Name = name ; TType = tType ; Constructors = constructors })
+        (fun name tType constructors -> { Name = name ; TType = tType ; Constructors = constructors ; Annotation = () })
 
 
     and definition (indent : int) : UDef Parser =
         Parser.choice
             [
-                valueDefinition indent >=> UValueDef
-                typeDefinition indent >=> UTypeDef
+                valueDefinition indent >=> ValueDef
+                typeDefinition indent >=> TypeDef
             ]
 
 

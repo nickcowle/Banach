@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Domain.fs" />
     <Compile Include="Untyped.fs" />
     <Compile Include="Parser.fsi" />
     <Compile Include="Parser.fs" />

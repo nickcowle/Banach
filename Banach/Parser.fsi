@@ -5,7 +5,7 @@ open Parsy
 [<RequireQualifiedAccess>]
 module Parser =
 
-    val identifier : UIdent Parser
+    val identifier : Ident Parser
 
     val inlineExpression : UExpr Parser
 

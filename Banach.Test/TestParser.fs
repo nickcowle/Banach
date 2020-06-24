@@ -6,6 +6,8 @@ open Xunit
 
 module TestParser =
 
+    let makeUExpr body = { Body = body ; Annotation = () }
+
     let newLine = System.Environment.NewLine
 
     let assertOneFullParse (parser : 'a Parser) (input : string) (f : 'a -> unit) =
@@ -19,13 +21,13 @@ module TestParser =
     [<InlineData("foo")>]
     [<InlineData("f00")>]
     let ``Valid identifiers parse correctly`` (identifier : string) =
-        let test ident = Assert.Equal (identifier.Split('.') |> List.ofArray |> UIdent, ident)
+        let test ident = Assert.Equal (identifier.Split('.') |> List.ofArray |> Ident, ident)
         assertOneFullParse Parser.identifier identifier test
 
 
-    let i = List.singleton >> UIdent >> UExprIdent
-    let app e1 e2 = UExprApp (e1, e2)
-    let arr e1 e2 = UExprArr (e1, e2)
+    let i = List.singleton >> Ident >> ExprIdent >> makeUExpr
+    let app e1 e2 = ExprApp (e1, e2) |> makeUExpr
+    let arr e1 e2 = ExprArr (e1, e2) |> makeUExpr
 
     let validExpressionData =
         [
