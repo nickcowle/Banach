@@ -7,8 +7,7 @@ type Hole = Hole of string
 type ExprBody<'annot> =
 | ExprIdent of Ident
 | ExprApp of Expr<'annot> * Expr<'annot>
-| ExprArr of Expr<'annot> * Expr<'annot>
-| ExprNamed of Ident * Expr<'annot>
+| ExprArr of Ident option * Expr<'annot> * Expr<'annot>
 | ExprHole of Hole
 | ExprMatch of Expr<'annot> * (Ident * Ident list * Expr<'annot>) list
 

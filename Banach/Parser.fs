@@ -43,10 +43,8 @@ module Parser =
         let ident = identifier >=> (ExprIdent >> makeUExpr)
         let hole = hole >=> (ExprHole >> makeUExpr)
 
-        let bracketedInline =
-            let inlineExpression = Parser.delay inlineExpressionInner
-            let named = (identifier .>> !!(+" " ++ !":" ++ +" "), inlineExpression) >==> (fun i e -> ExprNamed (i, e) |> makeUExpr)
-            Parser.choice [ inlineExpression ; named ] |> bracketed
+        let inlineExpr = Parser.delay inlineExpressionInner
+        let bracketedInline = inlineExpr |> bracketed
 
         let apps =
             let part = Parser.choice [ hole ; ident ; bracketedInline ]
@@ -55,8 +53,16 @@ module Parser =
 
         let arrows =
             let part = Parser.choice [ hole ; ident ; apps ; bracketedInline ]
-            Parser.interleave1 (fun e1 () e2 -> [e2;e1]) (fun es () e -> e::es) part !!(+" " ++ !"->" ++ +" ")
-            >=> (List.reduce (fun e1 e2 -> ExprArr (e2, e1) |> makeUExpr))
+            let maybeNamed =
+                let namedPart = (identifier >=> Some) .>> !!(+" " ++ !":" ++ +" ") .>>. inlineExpr |> bracketed
+                let unnamedPart = part >=> (fun e -> None, e)
+                Parser.choice [ namedPart ; unnamedPart ]
+
+            (
+                Parser.oneOrMore List.singleton (fun xs x -> x::xs) (maybeNamed .>> !!(+" " ++ !"->" ++ +" ")),
+                part
+            )
+            >==> (fun es e -> List.fold (fun e2 (ident, e1) -> ExprArr (ident, e1, e2) |> makeUExpr) e es)
 
         Parser.choice [ hole ; ident ; apps ; arrows ]
 

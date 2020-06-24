@@ -27,7 +27,8 @@ module TestParser =
 
     let i = List.singleton >> Ident >> ExprIdent >> makeUExpr
     let app e1 e2 = ExprApp (e1, e2) |> makeUExpr
-    let arr e1 e2 = ExprArr (e1, e2) |> makeUExpr
+    let arr e1 e2 = ExprArr (None, e1, e2) |> makeUExpr
+    let arri i e1 e2 = ExprArr (Some (i |> List.singleton |> Ident), e1, e2) |> makeUExpr
 
     let validExpressionData =
         [
@@ -37,6 +38,7 @@ module TestParser =
             "a (foo) (bar b c)", app (app (i "a") (i "foo")) (app (app (i "bar") (i "b")) (i "c"))
             "a -> b", arr (i "a") (i "b")
             "a -> b -> c", arr (i "a") (arr (i "b") (i "c"))
+            "(a : Type) -> List a -> List a", arri "a" (i "Type") (arr (app (i "List") (i "a")) (app (i "List") (i "a")))
         ]
         |> Map.ofList
 
